@@ -1,3 +1,15 @@
+# Nota: Pruebe la pagina para admin, hasta la pregunta 3 funciona como se debe, 
+# la pregunta 4 la hice a medias :(, 
+# si ingresa a la página con una cuenta de usuario la contraseña
+
+# Nota: Al usuario admin se ingresa con el correo juan.perez@admin.com y la contraseña es 123, 
+# como en la base de datos se almacenan string hasheados '123' se convierte en
+# '$2a$04$gz2sb1sDjG4g8MPrTNcmo.ZK1L8rgL5iTytPiog3Y9s1w4gbnw6qm'
+
+# Nota: Las contraseñas para todos los usuarios ingresados desde la base de datos es 123 (ya sean
+# admin o usuario), para los usuarios que cree desde las vistas de admin sus contraseñas
+# serán las que ingrese en la vista de creacion, en la base de datos aparecerán hasheadas
+
 CREATE SCHEMA LAB5;
 
 USE LAB5;
@@ -23,6 +35,8 @@ CREATE TABLE usuario (
 
 INSERT INTO rol (nombre) VALUES ('ADMIN'), ('USER');
 
+# Cuando quiera loguearse el pwd de la cuenta es 123, se hashea de 
+# '123' a  '$2a$04$gz2sb1sDjG4g8MPrTNcmo.ZK1L8rgL5iTytPiog3Y9s1w4gbnw6qm'
 INSERT INTO usuario (nombre, apellido, dni, email, edad, pwd, activo, idrol)
 VALUES ('Juan', 'Pérez', '12345678', 'juan.perez@admin.com', 35, '$2a$04$gz2sb1sDjG4g8MPrTNcmo.ZK1L8rgL5iTytPiog3Y9s1w4gbnw6qm', 1,
     (SELECT idrol FROM rol WHERE nombre = 'ADMIN'));
