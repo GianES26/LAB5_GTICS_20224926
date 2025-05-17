@@ -48,7 +48,8 @@ public class WebSecurityConfig {
 
                 Map<String, String> redirectMap = new HashMap<>();
                 redirectMap.put("ADMIN", "/admin/usuarios");
-                redirectMap.put("USER", "/usuario/juego");
+                //redirectMap.put("USER", "/usuario/juego");
+                redirectMap.put("USER", "/home");
 
                 String redirectUrl = redirectMap.getOrDefault(rol, "/home");
                 new DefaultRedirectStrategy().sendRedirect(request, response, redirectUrl);
@@ -90,8 +91,11 @@ public class WebSecurityConfig {
                                         .orElse("USER");
 
                                 Map<String, String> redirectMap = new HashMap<>();
-                                redirectMap.put("ADMIN", "/admin/usuarios");
-                                redirectMap.put("USER", "/usuario/juego");
+                                //redirectMap.put("ADMIN", "/admin/usuarios");
+                                //redirectMap.put("USER", "/usuario/juego");
+                                redirectMap.put("ADMIN", "/home");
+                                redirectMap.put("USER", "/home");
+
 
                                 String redirectUrl = redirectMap.getOrDefault(rol, "/home");
                                 new DefaultRedirectStrategy().sendRedirect(request, response, redirectUrl);

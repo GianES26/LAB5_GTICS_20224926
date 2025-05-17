@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>Juego de Preguntas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container mt-4">
+  <h2>Juego de Preguntas</h2>
+
+  <!-- Error Message -->
+  <div th:if="${error}" class="alert alert-danger" role="alert">
+    <span th:text="${error}"></span>
+  </div>
+
+  <!-- Question Form -->
+  <div th:unless="${partida}">
+    <h3>Pregunta <span th:text="${indicePregunta + 1}"></span> de <span th:text="${totalPreguntas}"></span></h3>
+    <form th:action="@{/usuario/juego/responder}" method="post">
+      <input type="hidden" name="indicePregunta" th:value="${indicePregunta}">
+      <p th:text="${pregunta.texto}"></p>
+      <div th:each="opcion, iter : ${pregunta.opciones}" class="form-check">
+        <input class="form-check-input" type="checkbox" name="respuesta" th:value="${iter.index}" th:id="'opcion' + ${iter.index}">
+        <label class="form-check-label" th:for="'opcion' + ${iter.index}" th:text="${opcion}"></label>
+      </div>
+      <button type="submit" class="btn btn-primary mt-3">Enviar Respuesta</button>
+    </form>
+  </div>
+
+  <!-- Result Display -->
+  <div th:if="${partida}">
+    <h3>Resultado de la Partida</h3>
+    <p>Fecha: <span th:text="${#temporals.format(partida.fecha, 'dd/MM/yyyy HH:mm:ss')}"></span></p>
+    <p>Puntaje: <span th:text="${partida.puntaje}"></span></p>
+    <p>Respuestas Correctas: <span th:text="${partida.respuestasCorrectas} + ' de 5'"></span></p>
+    <p th:class="${partida.ganada} ? 'text-success' : 'text-danger'">
+      Resultado: <span th:text="${partida.ganada} ? 'Ganaste' : 'Perdiste'"></span>
+    </p>
+    <a th:href="@{/usuario/juego}" class="btn btn-primary">Jugar de Nuevo</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
