@@ -39,22 +39,20 @@ public class WebSecurityConfig {
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return (request, response, accessDeniedException) -> {
-            // Si el usuario está autenticado, redirige según su rol
             if (request.getUserPrincipal() != null) {
                 Authentication authentication = (Authentication) request.getUserPrincipal();
                 String rol = authentication.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .findFirst()
-                        .orElse("usuario");
+                        .orElse("USER");
 
                 Map<String, String> redirectMap = new HashMap<>();
-                redirectMap.put("admin", "/admin");
-                redirectMap.put("usuario", "/usuario");
+                redirectMap.put("ADMIN", "/admin/usuarios");
+                redirectMap.put("USER", "/usuario/juego");
 
                 String redirectUrl = redirectMap.getOrDefault(rol, "/home");
                 new DefaultRedirectStrategy().sendRedirect(request, response, redirectUrl);
             } else {
-                // Si no está autenticado, redirige al login
                 new DefaultRedirectStrategy().sendRedirect(request, response, "/openLoginWindow");
             }
         };
@@ -64,24 +62,20 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        // Permitir acceso público a recursos estáticos
-                        .requestMatchers(
-                                "/home/**"
-                        ).permitAll()
-                        .requestMatchers("/admin", "/admin/**").hasAuthority("ADMIN")
-                        .requestMatchers("/usuario", "/usuario/**").hasAuthority("USER")
-                        .anyRequest().permitAll()
+                        .requestMatchers( "/openLoginWindow", "/submitLoginForm").permitAll()
+                        .requestMatchers("/home/**","/admin", "/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers("/home/**","/usuario", "/usuario/**").hasAuthority("USER")
+                        .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
-                        .accessDeniedHandler(accessDeniedHandler()) // Maneja errores 403
+                        .accessDeniedHandler(accessDeniedHandler())
                 )
                 .formLogin(form -> form
                         .loginPage("/openLoginWindow")
                         .loginProcessingUrl("/submitLoginForm")
                         .successHandler((request, response, authentication) -> {
                             HttpSession session = request.getSession();
-                            session.setAttribute("usuario",
-                                    usuarioRepository.findByEmail(authentication.getName()));
+                            session.setAttribute("usuario", usuarioRepository.findByEmail(authentication.getName()));
 
                             DefaultSavedRequest defaultSavedRequest =
                                     (DefaultSavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST");
@@ -92,11 +86,12 @@ public class WebSecurityConfig {
                             } else {
                                 String rol = authentication.getAuthorities().stream()
                                         .map(GrantedAuthority::getAuthority)
-                                        .findFirst().orElse("USER");
+                                        .findFirst()
+                                        .orElse("USER");
 
                                 Map<String, String> redirectMap = new HashMap<>();
-                                redirectMap.put("ADMIN", "/admin");
-                                redirectMap.put("USER", "/usuario");
+                                redirectMap.put("ADMIN", "/admin/usuarios");
+                                redirectMap.put("USER", "/usuario/juego");
 
                                 String redirectUrl = redirectMap.getOrDefault(rol, "/home");
                                 new DefaultRedirectStrategy().sendRedirect(request, response, redirectUrl);
@@ -109,7 +104,7 @@ public class WebSecurityConfig {
                         .invalidateHttpSession(true)
                 )
                 .sessionManagement(session -> session
-                        .invalidSessionUrl("/openLoginWindow") // Redirige al login si la sesión es inválida
+                        .invalidSessionUrl("/openLoginWindow")
                         .sessionAuthenticationErrorUrl("/openLoginWindow")
                         .maximumSessions(1)
                         .expiredUrl("/openLoginWindow?expired=true")

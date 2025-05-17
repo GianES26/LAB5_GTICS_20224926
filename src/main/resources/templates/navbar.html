@@ -1,26 +1,25 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light" th:fragment="navbar">
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/adivinanzas">Adivinanzas</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <a class="navbar-brand" href="#">Lab 5</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/home}">Inicio</a>
+                </li>
                 <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
-                    <a class="nav-link" th:href="@{/admin/usuarios}">Usuarios</a>
+                    <a class="nav-link" th:href="@{/admin/usuarios/lista}">Usuarios</a>
                 </li>
                 <li class="nav-item" sec:authorize="hasAuthority('USER')">
-                    <a class="nav-link" th:href="@{/user/juego}">Juego</a>
-                </li>
-                <li class="nav-item" sec:authorize="hasAuthority('USER')">
-                    <a class="nav-link" th:href="@{/user/partidas}">Últimas Partidas</a>
+                    <a class="nav-link" th:href="@{/usuario/juego}">Juego</a>
                 </li>
             </ul>
             <span class="navbar-text me-3" sec:authorize="isAuthenticated()">
